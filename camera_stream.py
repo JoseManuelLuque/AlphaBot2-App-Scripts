@@ -6,13 +6,12 @@ Compatible con Raspberry Pi Camera usando picamera
 """
 
 import io
-import socketserver
-from threading import Condition
-from http import server
-import time
-import subprocess
 import os
-import signal
+import socketserver
+import subprocess
+import time
+from http import server
+from threading import Condition
 
 try:
     import picamera
@@ -115,7 +114,6 @@ def kill_camera_processes():
 
 def main():
     global output
-    camera = None
 
     print("=" * 60)
     print("SERVIDOR DE STREAMING - ALPHABOT2")
@@ -131,16 +129,13 @@ def main():
     try:
         print("\n📷 Iniciando cámara...")
 
-        # ### CAMBIO 1: Simplificar la inicialización ###
-        # A menudo, la forma más directa es la mejor.
-        # En lugar de usar modos de sensor complejos, inicializamos con los parámetros finales.
+        # Inicializamos con los parámetros finales.
         # Si esto falla, las excepciones nos dirán por qué.
         camera = picamera.PiCamera(
             resolution=(STREAM_WIDTH, STREAM_HEIGHT),
             framerate=STREAM_FPS
         )
 
-        # ### CAMBIO 2: Dar tiempo al sensor para que se "despierte" ###
         # Esto es muy importante. A veces la cámara necesita un momento para la calibración
         # automática de exposición y balance de blancos.
         print("   → Calibrando sensor (2 segundos)...")
@@ -159,7 +154,7 @@ def main():
             print(f"\nServidor iniciado correctamente")
             # Obtenemos la IP local para mostrarla
             ip_addr = subprocess.check_output(['hostname', '-I']).decode('utf-8').strip()
-            print(f"URL: http://{ip_addr}:{STREAM_PORT}/stream.mjpg")
+            print(f"URL: https://{ip_addr}:{STREAM_PORT}/stream.mjpg")
             print("\nServidor corriendo...\n")
 
             server_instance.serve_forever()
