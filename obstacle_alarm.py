@@ -22,6 +22,9 @@ USO:
     Ctrl+C para detener
 
 =============================================================================
+ESTE SCRIPT SI FUNCIONA PERO DECIDI NO USARLO FINALMENTE YA QUE PODIA RESULTAR
+UN POCO MOLESTO PARA EL USUARIO SI SE ACTIVABA LA ALARMA CON FRECUENCIA
+=============================================================================
 """
 
 import RPi.GPIO as GPIO

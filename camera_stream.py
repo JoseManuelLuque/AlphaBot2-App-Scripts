@@ -1,8 +1,26 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Servidor de streaming de cámara para AlphaBot2
-Compatible con Raspberry Pi Camera usando picamera
+=============================================================================
+SERVIDOR DE STREAMING DE CÁMARA PARA ALPHABOT2
+=============================================================================
+Este script crea un servidor HTTP simple que sirve un stream MJPEG desde la
+Raspberry Pi Camera usando la librería `picamera`.
+
+CARACTERÍSTICAS:
+- Sirve `/stream.mjpg` como multipart/x-mixed-replace (MJPEG)
+- Intenta liberar procesos previos que ocupen la cámara
+- Ajustes configurables: puerto, resolución, FPS, calidad
+
+USO:
+- Ejecutar en la Raspberry Pi con cámara habilitada
+- Acceder desde un navegador a: http://<IP>:8080/stream.mjpg
+
+NOTAS:
+- Este servidor es sencillo y pensado para uso local/dev. No implementa
+  autenticación ni TLS. Si quieres acceso público protege el stream.
+
+=============================================================================
 """
 
 import io
@@ -28,17 +46,29 @@ STREAM_QUALITY = 70
 
 class StreamingOutput(object):
     def __init__(self):
+        # Último frame JPEG listo para enviar
         self.frame = None
+
+        # Buffer temporal donde picamera escribe los bytes
         self.buffer = io.BytesIO()
+
+        # Condition para notificar a los hilos HTTP cuando hay un frame nuevo
         self.condition = Condition()
 
     def write(self, buf):
+        # picamera envía bytes continuos; cuando detectamos el inicio JPEG
+        # (0xFFD8) consideramos que el frame anterior está completo.
         if buf.startswith(b'\xff\xd8'):
+            # Limpiar buffer para el nuevo frame
             self.buffer.truncate()
             with self.condition:
+                # Guardar el frame completo para que el handler lo sirva
                 self.frame = self.buffer.getvalue()
+                # Despertar los hilos que esperan un nuevo frame
                 self.condition.notify_all()
+            # Volver al principio del buffer para escribir el nuevo frame
             self.buffer.seek(0)
+        # Escribir los bytes entrantes en el buffer (retorna número de bytes)
         return self.buffer.write(buf)
 
 class StreamingHandler(server.BaseHTTPRequestHandler):
@@ -56,13 +86,17 @@ class StreamingHandler(server.BaseHTTPRequestHandler):
             self.end_headers()
             try:
                 while True:
+                    # Esperar hasta que haya un frame nuevo disponible
                     with output.condition:
                         output.condition.wait()
                         frame = output.frame
+
+                    # Escribir el límite del multipart y los headers del frame
                     self.wfile.write(b'--FRAME\r\n')
                     self.send_header('Content-Type', 'image/jpeg')
                     self.send_header('Content-Length', len(frame))
                     self.end_headers()
+                    # Escribir los bytes JPEG del frame
                     self.wfile.write(frame)
                     self.wfile.write(b'\r\n')
             except Exception as e:
@@ -103,6 +137,7 @@ def kill_camera_processes():
                 pid = pid.strip()
                 if pid and int(pid) != current_pid:
                     print(f"   → Matando proceso antiguo (PID: {pid})")
+                    # Forzamos la terminación del proceso para liberar la cámara
                     subprocess.run(["kill", "-9", pid], stderr=subprocess.DEVNULL)
             time.sleep(0.5)
 
@@ -136,8 +171,8 @@ def main():
             framerate=STREAM_FPS
         )
 
-        # Esto es muy importante. A veces la cámara necesita un momento para la calibración
-        # automática de exposición y balance de blancos.
+        # Esto es muy importante. A veces la cámara necesita un momento para la
+        # calibración automática de exposición y balance de blancos.
         print("   → Calibrando sensor (2 segundos)...")
         time.sleep(2)
         print("   ✅ Cámara inicializada y calibrada.")
@@ -145,6 +180,7 @@ def main():
         output = StreamingOutput()
 
         print("\nIniciando captura de video...")
+        # Arrancar la grabación en formato MJPEG hacia nuestro objeto output
         camera.start_recording(output, format='mjpeg', quality=STREAM_QUALITY)
 
         try:
@@ -152,9 +188,11 @@ def main():
             server_instance = StreamingServer(address, StreamingHandler)
 
             print(f"\nServidor iniciado correctamente")
-            # Obtenemos la IP local para mostrarla
+            # Obtenemos la IP local y mostramos la URL. NOTA: el servidor es HTTP
+            # (no TLS). Si necesitas HTTPS deberías configurar un proxy/TLS por
+            # delante del servidor.
             ip_addr = subprocess.check_output(['hostname', '-I']).decode('utf-8').strip()
-            print(f"URL: https://{ip_addr}:{STREAM_PORT}/stream.mjpg")
+            print(f"URL: http://{ip_addr}:{STREAM_PORT}/stream.mjpg")
             print("\nServidor corriendo...\n")
 
             server_instance.serve_forever()
