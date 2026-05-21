@@ -17,8 +17,9 @@ COMANDOS ACEPTADOS:
 - "speed:<valor>" : Ajusta la velocidad máxima (10-100)
 - "status"        : Devuelve el estado actual
 
-AUTOR: José Manuel Luque González
-FECHA: 2025
+=============================================================================
+NO FUNCIONA CORRECTAMENTE EN LA APP FINAL EL ROBOT NO ES CAPAZ DE CALINRARSE
+Y SEGUIR LA LINEA, AUNQUE SIGUIERA LAS INDICACIONES PROPUESTAS POR EL FABRICANTE
 =============================================================================
 """
 

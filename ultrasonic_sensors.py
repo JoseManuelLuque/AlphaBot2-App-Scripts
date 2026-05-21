@@ -10,8 +10,11 @@ PINES GPIO:
 - Sensor Izquierdo: TRIG=22, ECHO=27
 - Sensor Derecho: TRIG=23, ECHO=24
 
-AUTOR: José Manuel Luque González
-FECHA: 2025
+=============================================================================
+NO HA SIDO USADO EN LA APP FINAL, YA QUE TENIA PENSADO USARLO COMO UN SISITEMA
+DE SEGURIDAD PARA NO CHOCAR CON PAREDES PERO ME ROMPIA EL BUCLE DE CONTROL POR
+COMPLETO Y NO PODIA VOLVER A INICIARLO, LO DEJO YA QUE EN SI EL SCRIPT FUNCONA
+ME FALLA YA EN EL ESTADO DE LOS OTROS
 =============================================================================
 """
 

@@ -23,8 +23,6 @@ CONTROL:
 El control es tipo FPS: el joystick indica VELOCIDAD de rotación,
 no posición absoluta. Mantener el stick = seguir girando.
 
-AUTOR: José Manuel Luque González
-FECHA: 2025
 =============================================================================
 """
 

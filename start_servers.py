@@ -22,8 +22,6 @@ LOGS:
     /tmp/camera_stream.log  - Log del servidor de streaming
     /tmp/joystick_server.log - Log del servidor de control
 
-AUTOR: José Manuel Luque González
-FECHA: 2025
 =============================================================================
 """
 

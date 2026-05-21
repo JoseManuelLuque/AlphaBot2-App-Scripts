@@ -28,8 +28,6 @@ SEGURIDAD:
 - Timeout de 500ms: si no hay comandos, detiene motores automáticamente
 - Watchdog en thread separado monitoreando constantemente
 
-AUTOR: José Manuel Luque González
-FECHA: 2025
 =============================================================================
 """
 

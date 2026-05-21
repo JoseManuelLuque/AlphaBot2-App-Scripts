@@ -21,8 +21,6 @@ USO:
 
     Ctrl+C para detener
 
-AUTOR: José Manuel Luque González
-FECHA: 2025
 =============================================================================
 """
 
