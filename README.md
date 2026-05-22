@@ -2,7 +2,7 @@
 
 Este repositorio contiene los scripts en Python que se ejecutan directamente en la Raspberry Pi del robot AlphaBot2. Su función es levantar servidores de escucha y procesar las peticiones de red para accionar los motores, servos, LEDs y sensores físicos mediante los pines GPIO.
 
-**Repositorio principal (App Android de Control):** [Hola](https://github.com/JoseManuelLuque/AlphaBot2_App)
+**Repositorio principal (App Android de Control):** [Repositorio Principal](https://github.com/JoseManuelLuque/AlphaBot2_App)
 
 ## Arquitectura de Comunicación
 
